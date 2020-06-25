@@ -1,10 +1,44 @@
-import { Component, Input } from '@angular/core';
-
+import { Component, Input, OnInit,Output,EventEmitter } from '@angular/core';
+import { FormControl } from '@angular/forms';
 @Component({
   selector: 'hello',
-  template: `<h1>Hello {{name}}!</h1>`,
+  template: `<div class="search-bar">
+  <span class="icon icon-search"></span>
+    <form (submit)="onSearch()" action="#">
+  <input type="search" class="form-control ml-2" name="search" id="search" [formControl]="searchField" (keydown.enter)="onSearch()" 
+    placeholder="Search..." autofocus>
+  <button mat-raised-button type="submit" class="successButton" id="invSearch" title="Click to perform search." >Search</button>
+</form>
+</div>
+`,
   styles: [`h1 { font-family: Lato; }`]
 })
-export class HelloComponent  {
-  @Input() name: string;
+export class HelloComponent implements OnInit {
+
+  public searchField:FormControl=new FormControl('');
+
+@Output() public searchText: EventEmitter<any>=new EventEmitter();;
+  ngOnInit(){
+    this.onSearch()
+
+  }
+
+  onSearch(){
+    console.log("sadf",this.searchField.value)
+        this.searchField.valueChanges.subscribe((text:any)=>{
+       if (this.searchField.value !== '' && !this.searchField.value.replace(/\s/g, '').length) {
+          return;
+        }
+    this.searchText.emit(this.searchField.value)
+    })
+
+  }
+
+  //   public closeSearchBox(): void {
+  //     console.log("close")
+  //   if (this.searchField.value) {
+  //     this.searchField.patchValue('');
+  //     this.searchText.emit(this.searchField.value);
+  //   }
+  // }
 }
